@@ -59,7 +59,7 @@ $(document).ready(function(){
 			method: "GET",
 			url:"/deletecomment/" + commentId
 		}).done(function(data){
-		})
+		});
 		showComments(articleId);
 	});		
 
@@ -87,7 +87,7 @@ $(document).ready(function(){
 		}
 		articleId = article._id;
 		showComments(articleId);
-	}
+	};
 
 	// Function to build comments display for article
 	var showComments = function(articleId) {
@@ -100,6 +100,6 @@ $(document).ready(function(){
 			}
 			$("#articleComments").append(commentText);
 		});
-	}
+	};
 
 });
