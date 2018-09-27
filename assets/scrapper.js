@@ -1,8 +1,4 @@
-$(document).ready(function() {
-  /////////////////////////////////////////////// /* Initialize Modals */ ////////////////////////////////////////////////////////
-  $('#saveModal').modal(); // Articles Saved Modal
-  $('#modalMessage').modal(); // Message Modal
-  $(document).ready(function(){
+$(document).ready(function(){
 
 	// Default variables
 	var articleList = [];
@@ -14,7 +10,7 @@ $(document).ready(function() {
 
 	$('#comments').addClass('hidden');
 
-	// This starts the scrape at the loading of the page!!!
+	// MAIN COMMAND FOR SCRAPING!
 	$.getJSON('/scrape', function(){
 	});
 
@@ -27,22 +23,46 @@ $(document).ready(function() {
 		}); 		
 	});
 
-	// Display previous article from the array of articles
+	// Command that states on click to go to the previous article
 	$(document).on('click','.previous', function(){
 		article = articleList[previousArticle];
 		currentArticle = previousArticle;
 		showArticle(article);
 	}); 
 
-	// Display next article from the array of articles
+	// Command for on click that brings up a new article
 	$(document).on('click','.next', function(){
 		article = articleList[nextArticle];
 		currentArticle = nextArticle;
 		showArticle(article);
 	}); 
 
+	//Command for leaving a comment
+	$(document).on('click','#addComment', function(){
+		if($('#commentText').val() != '') {
+			var name = $('#name').val();
+			var comment = $('#commentText').val();
+			$.post("/addcomment/" + articleId, {name: name, comment: comment}, function(e) {
+				e.preventDefault();
+			});
+			$('#name').val('');
+			$('#commentText').val('');
+			showComments(articleId);
+		}
+	});	
+	
+	// Delete comment from article and update comments display
+	$(document).on('click','.deletecomment', function(){
+		commentId = this.id;
+		// console.log("comment id "+ commentId);
+		$.ajax({
+			method: "GET",
+			url:"/deletecomment/" + commentId
+		}).done(function(data){
+		})
+		showComments(articleId);
+	});		
 
-		});
 	// Function to build article display
 	var showArticle = function(article) {
 		$('#title').text(article.title);
@@ -67,7 +87,19 @@ $(document).ready(function() {
 		}
 		articleId = article._id;
 		showComments(articleId);
-	};
+	}
 
-	
+	// Function to build comments display for article
+	var showComments = function(articleId) {
+		$("#comments").removeClass("hidden");
+		$("#articleComments").empty();
+		var commentText = '';
+		$.getJSON('comments/'+articleId, function(data){
+			for(var i = 0; i < data.length; i++){
+				commentText = commentText + '<div class="well"><span id="'+data[i]._id+'" class="glyphicon glyphicon-remove text-danger deletecomment"></span> '+data[i].comment+' - '+data[i].name+'</div>';
+			}
+			$("#articleComments").append(commentText);
 		});
+	}
+
+});
