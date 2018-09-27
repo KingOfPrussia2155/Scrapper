@@ -41,32 +41,8 @@ $(document).ready(function() {
 		showArticle(article);
 	}); 
 
-	// Add comment to article and update comments display
-	$(document).on('click','#addComment', function(){
-		if($('#commentText').val() != '') {
-			var name = $('#name').val();
-			var comment = $('#commentText').val();
-			$.post("/addcomment/" + articleId, {name: name, comment: comment}, function(e) {
-				e.preventDefault();
-			});
-			$('#name').val('');
-			$('#commentText').val('');
-			showComments(articleId);
-		}
-	});	
-	
-	// Delete comment from article and update comments display
-	$(document).on('click','.deletecomment', function(){
-		commentId = this.id;
-		// console.log("comment id "+ commentId);
-		$.ajax({
-			method: "GET",
-			url:"/deletecomment/" + commentId
-		}).done(function(data){
-		});
-		showComments(articleId);
-	});		
 
+		});
 	// Function to build article display
 	var showArticle = function(article) {
 		$('#title').text(article.title);
@@ -95,4 +71,3 @@ $(document).ready(function() {
 
 	
 		});
-});
